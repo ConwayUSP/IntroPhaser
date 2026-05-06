@@ -11,7 +11,7 @@ Todos os game objects estão vinculados a uma cena e usam a classe `Phaser.GameO
 
 ## Game Object Factories
 
-De acordo com o nome é ela que cria os nossos game objects dentro da nossa cena e é relativamente simples. Existem dois métodos: o `.add` e o `.create`, ambos criam o objeto mas o último consegue usar algumas configurações pré-definidas por você. É uma classe bem simples mas de imensa ajuda, pois não precisamos nos preocupar em como criar eles e também o objeto já fica compartilhado entre as cenas. Vamos ver eles então na prática, começando pelo (talvez) mais básico.
+De acordo com o nome é ela que cria os nossos game objects dentro da nossa cena e é relativamente simples. Existem dois métodos: o `.add` e o `.make`, o primeiro cria e já adiciona o objeto na cena, o segundo só cria e você tem controle de algumas configurações a mais. É uma classe bem simples mas de imensa ajuda, pois não precisamos nos preocupar em como criar eles e também o objeto já fica compartilhado entre as cenas. Vamos ver eles então na prática, começando pelo (talvez) mais básico.
 
 # Graphics
 
@@ -63,7 +63,7 @@ curveObject.draw(curveGraphics, 64);
 
 Com o `images` fazemos nossas imagens, e com `sprites` nossas sprites. Não estamos duvidando de sua capacidade intelectual, mas é praticamente só isso mesmo. O pulo do gato é que o Phaser já tem um **manager** que cuida desses game objects, que é o _Texture Manager_, é nele que ficará guardado seus desenhos e a maioria de todos os game objects que são renderizados passam pelo textures. A diferença principal entre uma imagem e um sprite é o fato das sprites terem o componente das animações também.
 
-Normalmente nós usamos `images` para desenhos estáticos, como logo, _background_, cenário... e no nosso exemplo vamos criar o cenário e o fundo, então baixe as imagens **background.png** e **scenery.png** de dentro de Apendice/jogo-exemplo/public (colocar imagens) e salve na pasta `public` do seu projeto, e agora já podemos carregá-las com `load` e adicionar na cena com `add`.
+Normalmente nós usamos `images` para desenhos estáticos, como logo, _background_, cenário... e no nosso exemplo vamos criar o cenário e o fundo, então se quiser acompanhar o exemplo, pode baixar a pasta `Apendice/jogo-exemplo/public` e copie os elementos na public do seu projeto e agora já podemos carregá-la com `load` e adicionar na cena com `add`.
 
 ```js 
 
@@ -78,9 +78,38 @@ Normalmente nós usamos `images` para desenhos estáticos, como logo, _backgroun
 
 ```
 
-Se nada explodiu ainda você deve ver sua imagem renderizada, **LEMBRE** sempre que a ordem de adicionar importa como em uma fila, então se por exemplo você adicionar o cenário antes do fundo e começar a questionar suas escolhas de vida quando o cenário não aparece, é porque a imagem do fundo está cobrindo o cenário. Por isso existe o `setDepth()` onde você tem controle sobre essa ordem. Além dele existe:
+Se nada explodiu ainda você deve ver sua imagem renderizada, **LEMBRE** sempre que a ordem de adicionar importa como em uma fila, então se por exemplo você adicionar o cenário antes do fundo e começar a questionar suas escolhas de vida quando uma outra imagem não aparece, é porque a imagem do fundo está cobrindo a da frente. Por isso existe o `setDepth()` onde você tem controle sobre essa ordem. Além dele outros métodos mais comuns são:
 
+> A maioria dos métodos tem seus 'membros', ou seja, se existe o `setAlpha()` muito provavelmente existe o `alpha` que nos dá o valor. Não vamos colocar todos os métodos pois não faz sentido mas, novamente, se você precisa de algo provavelmente terá [aqui](https://docs.phaser.io/api-documentation/api-documentation)
 
+```js 
+    .setAlpha() // transparencia
+    .setFlipX() // e Y, inverte a imagem na direção
+    .setLightning() // ativa o WEbGL para o uso luzes dinâmicas, quando já criadas e adicionadas no pelo LightsManager
+    .setScale() // ajusta a escala 
+    .setRotation() // rotação em radianos
+    .setDisplaySize() // e setSize(), a diferença entre os dois é que o DisplaySize só muda como ela é apresentada e o Size muda também a lógica afetada, vamos entender melhor nas sprites
+    .setTint() // aplica uma cor (tintura) 
 
+```
+As `sprites` tem basicamente todos os métodos de imagem e o adicional de podermos criar animações em cima delas, mas veremos isso no próximo capítulo. Porém o Phaser também consegue carregar `spritesheets` nativamente para ser usada em uma animação, ou seja, nós podemos já carregar ela e adicionar na cena: 
 
+```js
+// ./src/Start.js
+    preload() {
+        this.load.image('background', 'background.png');
+        this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
+        this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
+        this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
+    }
+
+    create() {
+        this.add.image(950, 450, 'background');
+        this.add.sprite(100, 800, 'player_idle')
+    }
+
+```
+Vamos ver o nosso querido Mush ali, parado sem saber o que fazer, mas é isso que escrevemos só adicionamos ele na cena, agora precisamos criar as animações e o mais importante, dar vida a ele (adicionar ele na física).
+
+# Animations
 
