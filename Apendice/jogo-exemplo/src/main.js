@@ -4,8 +4,8 @@ import Start from "./Start.js"
 
 const config = {
     type: Phaser.AUTO, // usa o browser WebGL (ou Canvas) para renderizar na tela 
-    width: 1900, // comprimento da tela
-    height: 900, // altura da tela
+    width: 1280, // comprimento da tela
+    height: 720, // altura da tela
     backgroundColor: '#2d2d2d', // cor de fundo da tela
     physics: {
         default: 'arcade',

@@ -73,14 +73,14 @@ Normalmente nós usamos `images` para desenhos estáticos, como logo, _backgroun
     }
 
     create() {
-        this.add.image(950, 450, 'background');
+        this.add.image(620, 360, 'background');
     }
 
 ```
 
 Se nada explodiu ainda você deve ver sua imagem renderizada, **LEMBRE** sempre que a ordem de adicionar importa como em uma fila, então se por exemplo você adicionar o cenário antes do fundo e começar a questionar suas escolhas de vida quando uma outra imagem não aparece, é porque a imagem do fundo está cobrindo a da frente. Por isso existe o `setDepth()` onde você tem controle sobre essa ordem. Além dele outros métodos mais comuns são:
 
-> A maioria dos métodos tem seus 'membros', ou seja, se existe o `setAlpha()` muito provavelmente existe o `alpha` que nos dá o valor. Não vamos colocar todos os métodos pois não faz sentido mas, novamente, se você precisa de algo provavelmente terá [aqui](https://docs.phaser.io/api-documentation/api-documentation)
+> A maioria dos métodos tem seus 'membros', ou seja, se existe o `setAlpha()` muito provavelmente existe o `alpha` que nos dá o valor. Não vamos colocar todos os métodos de todas as classes pois não faz sentido mas, novamente, se você precisa de algo provavelmente terá [aqui](https://docs.phaser.io/api-documentation/api-documentation)
 
 ```js 
     .setAlpha() // transparencia
@@ -97,19 +97,101 @@ As `sprites` tem basicamente todos os métodos de imagem e o adicional de poderm
 ```js
 // ./src/Start.js
     preload() {
-        this.load.image('background', 'background.png');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
     }
 
     create() {
-        this.add.image(950, 450, 'background');
-        this.add.sprite(100, 800, 'player_idle')
+        this.add.sprite(100, 600, 'player_idle')
     }
 
 ```
 Vamos ver o nosso querido Mush ali, parado sem saber o que fazer, mas é isso que escrevemos só adicionamos ele na cena, agora precisamos criar as animações e o mais importante, dar vida a ele (adicionar ele na física).
 
-# Animations
+# Group
 
+O grupo é a forma de juntar vários game objects, por exemplo, se temos várias moedas que o jogador precisa pegar, ou plataformas que ele possa subir e todas obedecem a mesma lógica, ou quase, faz sentido agrupar essas sprites/imagens. 
+Depois de adicionar um grupo na cena, podemos criar os objetos do grupo e já adicionar eles no grupo com o `.create()`.
+
+>Não confundir com o create da cena.
+>Quando se usa o create de uma Texture ele virá sprite por padrão.
+
+ No nosso exemplo vamos criar então moeditas e adicionar elas na cena através de um grupo por meio de uma função:
+
+```js
+// ./src/Start.js
+    preload() {
+        //...
+        this.load.image('coin', 'coin.png');
+    }
+
+    create() {
+        //...
+        this.createCoins();
+    }
+
+//cria moedas
+    createCoins() {
+        let positions = [
+            { x: 100, y: 250 },
+            { x: 350, y: 500 },
+            { x: 640, y: 365 },
+            { x: 780, y: 170 },
+            { x: 1100, y: 600 },
+        ]
+        this.coinsGroup = this.add.group()
+        positions.forEach(pos => {
+            this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
+        });
+    }
+```
+Pronto, mas ainda precisamos de um chão e plataformas para conseguir pegar elas, então outro método que podemos criar é:
+
+```js
+    createPlatforms() {
+        this.platformGroup = this.add.group();
+        this.platformGroup.createMultiple({
+            key: 'platform',
+            repeat: 5
+        }); // cria 6 de uma vez (1 + repeat)
+        let platforms = this.platformGroup.getChildren(); // retorna um array contenco cada um
+        platforms[0].setPosition(80, 680);
+        platforms[1].setPosition(80, 380);
+        platforms[2].setPosition(350, 550).setScale(0.5, 1);
+        platforms[3].setPosition(640, 485).setScale(1, 1.3);
+        platforms[4].setPosition(780, 280);
+        platforms[5].setPosition(1200, 670);
+    }
+```
+Mas você como um bom programador já viu que a coisa ta ficando feia, algumas cópias e tendo que colocar as posições _hardcoded_ não é a melhor prática, como nosso jogo-exemplo é simples vamos deixar assim mas claramente existe meios melhores e softwares especializados para criar JSON. O Phaser tem compatibilidade com vários deles.
+
+# Lights
+
+Luzes e sombras são muito importante para a sensação de imersão e por isso exite um _manager_ só para isso, como game object existem dois tipo, um que usa os _shaders_ nativos para refletir essa luz em outros game objects que estejam adicionados no _manager_ e outro que a renderização é bem mais rápida mas não é interativa, vamos usar essa última no nosso exemplo. Então bora acender nosso pentagrama, logicamente.
+
+```js
+    create() {
+        this.lights.enable(); // sempre precisa ligar antes
+        this.lights.setAmbientColor(0x444444); // luz ambiente (senão fica tudo escuro)
+        this.add.image(640, 360, 'background').setLighting(true); // para interagir com o fundo
+        // ...
+        createLight();
+    }
+    createLight() {
+        let positions = [
+            {x: 400, y: 290},
+            {x: 880, y: 290},
+            {x: 500, y: 570},
+            {x: 790, y: 570},
+            {x: 640, y: 100},
+        ]
+        positions.forEach(pos => {
+            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false) // vamos deixar false por enquanto, para quando pegar uma moeda a luz acender, a gente pode acessar o array como this.lights.lights (parece bobo mas é isso)
+        })
+    }
+```
+
+# Text e BitmapText
+
+Praticamente todo texto do jogo será um desses dois formatos, o `text` usa a própia API do Canvas e escreve deu texto na tela e o `Bitmap Text` é como se fosse um spritesheet de uma fonte e usa ela para criar seu texto
