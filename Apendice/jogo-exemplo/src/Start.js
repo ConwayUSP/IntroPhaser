@@ -19,58 +19,56 @@ export default class Start extends Phaser.Scene {
         this.createCoins();
         this.createPlatforms()
         this.createLight();
-        console.log(this.lights.lights[0].setVisible(true))
+
+        this.lifes = this.add.text(20, 20, 'Lifes: 3', { fontSize: '20px', fill: '#11a531' });
+        this.timer = this.add.text(20, 40, 'Timer: 0', { fontSize: '20px', fill: '#b8190e' });
     }
 
-    update() {
+    update(time, delta) {
 
     }
 
+createCoins() {
+    let positions = [
+        { x: 100, y: 250 },
+        { x: 350, y: 500 },
+        { x: 640, y: 365 },
+        { x: 780, y: 170 },
+        { x: 1100, y: 600 },
+    ]
+    this.coinsGroup = this.add.group()
+    positions.forEach(pos => {
+        this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
+    });
+}
 
+createPlatforms() {
+    this.platformGroup = this.add.group();
+    this.platformGroup.createMultiple({
+        key: 'platform',
+        repeat: 5
+    }); // cria 6 de uma vez (1 + repeat)
+    let platforms = this.platformGroup.getChildren(); // retorna um array contendo cada um
+    platforms[0].setPosition(100, 640);
+    platforms[1].setPosition(80, 380);
+    platforms[2].setPosition(350, 550).setScale(0.5, 1);
+    platforms[3].setPosition(640, 485).setScale(1, 1.3);
+    platforms[4].setPosition(780, 280);
+    platforms[5].setPosition(1200, 670);
+    this.platformGroup.setTint(0xf55666)
+}
 
+createLight() {
+    let positions = [
+        { x: 400, y: 290 },
+        { x: 880, y: 290 },
+        { x: 500, y: 570 },
+        { x: 790, y: 570 },
+        { x: 640, y: 100 },
+    ]
+    positions.forEach(pos => {
+        this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(true)
 
-
-    createCoins() {
-        let positions = [
-            { x: 100, y: 250 },
-            { x: 350, y: 500 },
-            { x: 640, y: 365 },
-            { x: 780, y: 170 },
-            { x: 1100, y: 600 },
-        ]
-        this.coinsGroup = this.add.group()
-        positions.forEach(pos => {
-            this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
-        });
-    }
-
-    createPlatforms() {
-        this.platformGroup = this.add.group();
-        console.log(this.platformGroup.lights);
-        this.platformGroup.createMultiple({
-            key: 'platform',
-            repeat: 5
-        }); // cria 6 de uma vez (1 + repeat)
-        let platforms = this.platformGroup.getChildren(); // retorna um array contendo cada um
-        platforms[0].setPosition(100, 640);
-        platforms[1].setPosition(80, 380);
-        platforms[2].setPosition(350, 550).setScale(0.5, 1);
-        platforms[3].setPosition(640, 485).setScale(1, 1.3);
-        platforms[4].setPosition(780, 280);
-        platforms[5].setPosition(1200, 670);
-    }
-
-    createLight() {
-        let positions = [
-            {x: 400, y: 290},
-            {x: 880, y: 290},
-            {x: 500, y: 570},
-            {x: 790, y: 570},
-            {x: 640, y: 100},
-        ]
-        positions.forEach(pos => {
-            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false)
-            
-        })
-    }
+    })
+}
 }

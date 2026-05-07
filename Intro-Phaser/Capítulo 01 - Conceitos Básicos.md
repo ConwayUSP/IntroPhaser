@@ -53,8 +53,8 @@ export default class Start extends Phaser.Scene {
 
     }
 
-    update() {
-
+    update(time, delta) {
+        // time é o instante de tempo que o jogo está desde e o começo e delta é a taxa de atualização, normalmente 16.66 ms, para 60 FPS
     }
 
 }

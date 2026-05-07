@@ -162,9 +162,10 @@ Pronto, mas ainda precisamos de um chão e plataformas para conseguir pegar elas
         platforms[3].setPosition(640, 485).setScale(1, 1.3);
         platforms[4].setPosition(780, 280);
         platforms[5].setPosition(1200, 670);
+        this.platformGroup.setTint(0xf55666);
     }
 ```
-Mas você como um bom programador já viu que a coisa ta ficando feia, algumas cópias e tendo que colocar as posições _hardcoded_ não é a melhor prática, como nosso jogo-exemplo é simples vamos deixar assim mas claramente existe meios melhores e softwares especializados para criar JSON. O Phaser tem compatibilidade com vários deles.
+Mas você como um bom programador já viu que a coisa ta ficando feia, algumas cópias e tendo que colocar as posições _hardcoded_ não é a melhor prática, como nosso jogo-exemplo é simples vamos deixar assim mas claramente existe meios melhores e softwares especializados para criar JSON. O Phaser tem compatibilidade com vários deles. (vamos criar outros assets pro jogo-exemplo depois, por enquanto deixamos assim)
 
 # Lights
 
@@ -187,11 +188,29 @@ Luzes e sombras são muito importante para a sensação de imersão e por isso e
             {x: 640, y: 100},
         ]
         positions.forEach(pos => {
-            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false) // vamos deixar false por enquanto, para quando pegar uma moeda a luz acender, a gente pode acessar o array como this.lights.lights (parece bobo mas é isso)
+            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false) // vamos deixar false por enquanto, para quando pegar uma moeda a luz acender, a gente pode acessar o array como this.lights.lights (parece tosco mas é isso)
         })
     }
 ```
 
 # Text e BitmapText
 
-Praticamente todo texto do jogo será um desses dois formatos, o `text` usa a própia API do Canvas e escreve deu texto na tela e o `Bitmap Text` é como se fosse um spritesheet de uma fonte e usa ela para criar seu texto
+Praticamente todo texto do jogo será um desses dois formatos, o `text` usa a própia API do Canvas e escreve deu texto na tela e o `Bitmap Text` é como se fosse um spritesheet de uma fonte e usa ela para criar seu texto. Textos são muito versáteis, pode ser usado como diálogo, na UI, números de dano etc, no nosso caso podemos fazer alguns textos para nosso jogo: um _Timer_ e um contador de vidas, por agora. Para fins didáticos iremos ter uma outra cena que será a tela de _Game Over_ com outros textos mais para frente.
+
+Para criar um texto é a mesma lógica dos outros game objects:
+
+```js
+// ./src/Start.js
+
+    create() {
+        //...
+        // vamos inicializar assim
+        this.lifes = this.add.text(20, 20, 'Lifes: 3', { fontSize: '24px', fill: '#b8190e' });
+        this.timer = this.add.text(20, 40, 'Timer: 0', { fontSize: '24px', fill: '#b8190e' });
+        // quando vermos o Data Manager do Phaser mudamos um pouco aqui
+    }
+```
+
+# Conclusões
+
+Parabéns, você viu aproximadamente 1/5 dos _Game Objects_ que o Phaser dispõe (e menos ainda do que cada um pode fazer), porém já é um grande passo e podemos ver que o joguinho está tomando forma rapidamente, mesmo com pouco trabalho, esse é o diferencial do Phaser. No próximo capítulo colocaremos as animações e tweens, mesmo que o Mush esteja paralisado de medo, vai estar animado.
