@@ -103,7 +103,7 @@ As `sprites` tem basicamente todos os métodos de imagem e o adicional de poderm
     }
 
     create() {
-        this.add.sprite(100, 600, 'player_idle')
+        this.player = this.add.sprite(100, 600, 'player_idle') // salvamos a sprite no this.player para usar depois
     }
 
 ```
