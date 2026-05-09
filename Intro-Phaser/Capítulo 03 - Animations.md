@@ -131,8 +131,8 @@ let tween = this.tweens.add({
     // Como o tween funciona realmente, ou seja, que parâmetros você quer mudar ao longo da duração:
     x: '+=600',        // começa do x inicial
     y: 500,
-    rotation: ...
-    angle: ...
+    rotation: ...,
+    angle: ...,
     alpha: ...
     // ...
 
@@ -183,7 +183,7 @@ No nosso exemplo vamos dar um pouco de vida para as moedas adicionando um movime
             y: '-= 10', // sobe e desce um poquito
             scaleX: -2, // faz com que ela gire
             ease: 'Sine.easeInOut',      
-            duration: 1000, // sempre em ms
+            duration: 600, // sempre em ms
             repeat: -1,
             yoyo: true,
         })

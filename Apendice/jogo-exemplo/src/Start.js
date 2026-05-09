@@ -16,7 +16,7 @@ export default class Start extends Phaser.Scene {
         this.lights.enable();
         this.lights.setAmbientColor(0x444444); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true)
-        this.player = this.add.sprite(100, 600, 'player_idle');
+        this.player = this.physics.add.sprite(100, 600, 'player_idle');
         this.createCoins();
         this.createPlatforms()
         this.createLight();
@@ -42,6 +42,27 @@ export default class Start extends Phaser.Scene {
             repeat: -1,
         });
         this.player.play('idle'); // o .play recebe a key da animação e pode ser chamado direto em uma sprite 
+        
+        
+        
+        // this.time.delayedCall(250, () => {
+        //     let toggle = true; // Variável para controlar o estado
+
+        //     this.time.addEvent({
+        //         delay: 500, // Metade do intervalo original, já que ele alterna
+        //         callback: () => {
+        //             const offsetX = toggle ? 0 : this.coinsGroup.getChildren()[0].width; // Pega o width da coin ou 0 para ajustar o Offset
+
+        //             this.coinsGroup.getChildren().forEach(coin => {
+        //                 coin.body.setOffset(offsetX, 0);
+        //             }); 
+
+        //             toggle = !toggle; // Inverte para a próxima execução
+        //         },
+        //         loop: true
+        //     });
+        // });
+
     }
 
     update(time, delta) {
@@ -56,24 +77,26 @@ export default class Start extends Phaser.Scene {
             { x: 780, y: 170 },
             { x: 1100, y: 600 },
         ]
-        this.coinsGroup = this.add.group()
+        this.coinsGroup = this.physics.add.group()
         positions.forEach(pos => {
             this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
         });
+        this.coinsGroup.getChildren().forEach(coin => {
+            coin.body.setAllowGravity(false);
+        })
         this.add.tween({
             targets: this.coinsGroup.getChildren(),
             y: '-= 10',
             scaleX: -2,
-            ease: 'Sine.easeInOut',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
-            duration: 1000,
-            repeat: -1,            // -1: infinity
+            ease: 'Sine.easeInOut',
+            duration: 500,
+            repeat: -1,
             yoyo: true,
-
         })
     }
 
     createPlatforms() {
-        this.platformGroup = this.add.group();
+        this.platformGroup = this.physics.add.group({allowGravity: false, immovable: true});
         this.platformGroup.createMultiple({
             key: 'platform',
             repeat: 5

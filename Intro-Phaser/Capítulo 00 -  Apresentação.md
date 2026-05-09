@@ -37,7 +37,7 @@ A partir de uma escolha totalmente baseada em instintos, iremos por enquanto nos
 - _Inputs_
 - _Arcade Physics_
 - Cenas
-- _Tweens_ (animações especiais)
+- _Tweens_ 
 
 Já da pra fazer muita coisa com esses conceitos e iremos mesclar uns com outros não mostrados aqui, mas não chega perto do que o Phaser é capaz, por isso novamente reforçamos a usar o docs disponibilizados por eles. Durante os capítulos também criaremos na prática um joguinho de plataforma. (Se só quiser a versão final está no Apêndice)
 
