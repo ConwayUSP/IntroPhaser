@@ -92,11 +92,13 @@ Se nada explodiu ainda você deve ver sua imagem renderizada, **LEMBRE** sempre 
     .setTint() // aplica uma cor (tintura) 
 
 ```
-As `sprites` tem basicamente todos os métodos de imagem e o adicional de podermos criar animações em cima delas, mas veremos isso no próximo capítulo. Porém o Phaser também consegue carregar `spritesheets` nativamente para ser usada em uma animação, ou seja, nós podemos já carregar ela e adicionar na cena: 
+As `sprites` tem basicamente todos os métodos de imagem e o adicional de podermos criar animações em cima delas, mas veremos isso no próximo capítulo. Porém o Phaser também consegue carregar `spritesheets` nativamente para ser usada em uma animação, ou seja, nós podemos já carregar ela e adicionar na cena, vamos colocar as bolas de fogo e a lava também: 
 
 ```js
 // ./src/Start.js
     preload() {
+        this.load.image('fireball', 'fireball.png');
+        this.load.image('lava', 'lava.png');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
@@ -205,8 +207,8 @@ Para criar um texto é a mesma lógica dos outros game objects:
     create() {
         //...
         // vamos inicializar assim
-        this.lifes = this.add.text(20, 20, 'Lifes: 3', { fontSize: '24px', fill: '#b8190e' });
-        this.timer = this.add.text(20, 40, 'Timer: 0', { fontSize: '24px', fill: '#b8190e' });
+        this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '24px', fill: '#b8190e' });
+        this.timerTxt = this.add.text(20, 40, 'Timer: 0', { fontSize: '24px', fill: '#b8190e' });
         // quando vermos o Data Manager do Phaser mudamos um pouco aqui
     }
 ```

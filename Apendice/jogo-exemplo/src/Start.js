@@ -6,6 +6,8 @@ export default class Start extends Phaser.Scene {
         this.load.image('platform', 'platform.png');
         this.load.image('coin', 'coin.png');
         this.load.image('background', 'background.png');
+        this.load.image('fireball', 'fireball.png');
+        this.load.image('lava', 'lava.png');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
@@ -16,35 +18,40 @@ export default class Start extends Phaser.Scene {
         this.lights.enable();
         this.lights.setAmbientColor(0x444444); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true)
-        this.player = this.physics.add.sprite(100, 600, 'player_idle');
+        this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true);
         this.createCoins();
         this.createPlatforms()
         this.createLight();
+        this.physics.add.collider(this.player, this.platformGroup);
+        this.physics.add.overlap(this.player, this.coinsGroup);
 
-        this.lifes = this.add.text(20, 20, 'Lifes: 3', { fontSize: '20px', fill: '#11a531' });
-        this.timer = this.add.text(20, 40, 'Timer: 0', { fontSize: '20px', fill: '#b8190e' });
+
+
+
+        this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '20px', fill: '#11a531' });
+        this.timerTxt = this.add.text(20, 40, 'Timer: 0', { fontSize: '20px', fill: '#b8190e' });
         this.anims.create({
             key: "idle",
             frames: this.anims.generateFrameNumbers('player_idle', { frames: [0, 1] }),
-            frameRate: 4,
+            frameRate: 5,
             repeat: -1,
         });
         this.anims.create({
             key: "left",
-            frames: this.anims.generateFrameNumbers('walking_left', { frames: [0, 1, 2, 3] }),
-            frameRate: 4,
+            frames: this.anims.generateFrameNumbers('player_left', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
             key: "right",
-            frames: this.anims.generateFrameNumbers('walking_right', { start: 0, end: 3 }),
-            frameRate: 4,
+            frames: this.anims.generateFrameNumbers('player_right', { start: 0, end: 3 }),
+            frameRate: 10,
             repeat: -1,
         });
         this.player.play('idle'); // o .play recebe a key da animação e pode ser chamado direto em uma sprite 
-        
-        
-        
+
+
+
         // this.time.delayedCall(250, () => {
         //     let toggle = true; // Variável para controlar o estado
 
@@ -66,7 +73,7 @@ export default class Start extends Phaser.Scene {
     }
 
     update(time, delta) {
-
+        this.playerMovement()
     }
 
     createCoins() {
@@ -78,8 +85,11 @@ export default class Start extends Phaser.Scene {
             { x: 1100, y: 600 },
         ]
         this.coinsGroup = this.physics.add.group()
+        let i = 0;
         positions.forEach(pos => {
-            this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
+            let coin = this.coinsGroup.create(pos.x, pos.y, 'coin');
+            coin.setScale(2);
+            // coin.setData("ID", i);
         });
         this.coinsGroup.getChildren().forEach(coin => {
             coin.body.setAllowGravity(false);
@@ -96,7 +106,7 @@ export default class Start extends Phaser.Scene {
     }
 
     createPlatforms() {
-        this.platformGroup = this.physics.add.group({allowGravity: false, immovable: true});
+        this.platformGroup = this.physics.add.group({ allowGravity: false, immovable: true });
         this.platformGroup.createMultiple({
             key: 'platform',
             repeat: 5
@@ -120,8 +130,33 @@ export default class Start extends Phaser.Scene {
             { x: 640, y: 100 },
         ]
         positions.forEach(pos => {
-            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(true)
+            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false)
 
         })
     }
+
+    playerMovement() {
+        let movKeys = this.input.keyboard.addKeys("W,S,A,D");
+        if (Phaser.Input.Keyboard.JustDown(movKeys.W) && this.player.body.onFloor()) {
+            this.player.setVelocityY(-650);
+        }
+        if (movKeys.A.isDown) {
+            this.player.setVelocityX(-350);
+            this.player.play("left", true);
+        }
+        else if (movKeys.D.isDown) {
+            this.player.setVelocityX(350);
+            this.player.play("right", true);
+
+        }
+        else {
+            this.player.setVelocityX(0);
+            this.player.play("idle", true);
+        }
+    }
+
+    // collectCoin(player, coin) {
+    //     coin.destroy;
+    //     this.createLight(coin.getData("ID"))
+    // }
 }

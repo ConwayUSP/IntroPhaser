@@ -78,7 +78,7 @@ Primeiro as moedas:
         positions.forEach(pos => {
             this.coinsGroup.create(pos.x, pos.y, 'coin').setScale(2);
         });
-        // iteramos agora por cada moeda e desativamos a gravidade
+        // iteramos agora por cada moeda e desativamos a gravidade (ou fazemos como as plataformas, como veremos mais abaixo)
         this.coinsGroup.getChildren().forEach(coin => {
             coin.body.setAllowGravity(false);
         })
@@ -91,7 +91,7 @@ Vamos usar a mesma ideia pro player e para as plataformas:
 
 ```js
 //      ./Start.js
-    this.player = this.physics.add.sprite(100, 600, 'player_idle'); // só colocar ele na física, queremos gravidade pra ele
+    this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true);; // só colocar ele na física, queremos gravidade pra ele e que colida com o limite do mapa (veremos colisões depois)
         //...
     createPlatforms() {
         this.platformGroup = this.physics.add.group({allowGravity: false, immovable: true}); // conseguimos colocar as configs direto na criação também
@@ -102,3 +102,75 @@ Vamos usar a mesma ideia pro player e para as plataformas:
 Já está um pouco melhor e com o debug ativo conseguimos ver a hitbox como um retângulo rosa de cada objeto e aparentemente as das moedas estão erradas quando elas giram, justamente por conta da origem... Vamos resolver isso mais para frente. Mas também o nosso Mush está sendo caindo nas profundezas, atravessando a plataforma, precisamos de colisões.
 
 # Collision e Overlap
+
+As colisões levam em consideração o _boundary_ do nosso corpo, o que comumente chamamos de hitbox. No arcade existem algumas ~~várias~~ limitações quanto ao formato e cálculo das colisões e é essa parte que mais se diferencia do Matter, por exemplo, se um corpo passar com uma velocidade relativamente alta, vai ter o _phasing_. Ao adicionar os corpos no sistema físico eles não 'sabem' que outros corpos existem, por isso não há as colisões. Para isso adicionamos um _collider_ com os parâmetros sendo os corpos: 
+```js
+let collider = scene.physics.add.collider(
+  objectsA,
+  objectsB,
+  collideCallback // função que é chamada ao colidir
+);
+// this.physics.add.collider(objectsA, objectsB, collideCallback, processCallback, callbackContext);
+```
+A mesma assinatura é da `add.overlap()` como vimos acima. No nosso exemplo então podemos escrever:
+
+```js
+    // ./Start.js
+
+    create() {
+        //...
+        this.physics.add.collider(this.player, this.platformGroup);
+        this.physics.add.overlap(this.player, this.coinsGroup);
+    }
+```
+E agora o Mush não cai nas profundezas, mas ainda está parado... 
+
+
+# Inputs
+
+>Inputs é um sistema a parte da física, mas como não vamos nos aprofundar muito nele (apesar de ter muitas aplicações) por conta da natureza do nosso jogo-exemplo, decidimos colocar aqui para seguir a linha da criação.
+
+Vamos fazer ele se mover com nossos _inputs_ então e para isso o Phaser nos ajuda, como sempre.
+Com relação ao teclado, que é o que usaremos para fazer os movimentos, nós podemos adicionar teclas separadas e 'ouvir' através do sistema de eventos ou usar as próprias _keys objects_ que adiciona diretamente. O Phaser também tem o método de criar 5 teclas de uma vez (setinhas + espaço + shift), já que é muito usado em jogos:
+
+```js
+    let cursorKeys = scene.input.keyboard.createCursorKeys(); // cria as 5 teclas de uma vez
+    let movKeys = scene.input.keyboard.addKeys("W,S,A,D"); // cria as clássicas
+
+    // alguns membros e métodos
+    movKeys.W.isUp // e isDown, bool que diz se a W está UP (não pressionada) ou Down
+    movKeys.W.altKey // e ctrl/shiftKey, bool que diz se o W está pressionado junto com alt/ctrl/shift
+    movKeys.W.getDuration() // retorna o tempo em ms da duração do pressionamento
+    // Quando fazemos addKeys apenas adicionamos elas no Phaser, ou seja, precisamos usar o namespace Phaser.Input.Keyboard que possuí funções auxiliares como
+    Phaser.Input.Keyboard.JustDown(movKeys.W) // e JustUp, retorna um booleano uma única vez quando a tecla adicionada é pressionada/solta
+```
+Agora você pode escolher qual configuração usar, como somos gamers raízes vamos usar o WASD clássico no nosso exemplo, para separar melhor podemos criar uma função básica que controla o movimento:
+
+```js
+    playerMovement() {
+        let movKeys = this.input.keyboard.addKeys("W,S,A,D");
+        if (Phaser.Input.Keyboard.JustDown(movKeys.W) && this.player.body.onFloor()) {
+            this.player.setVelocityY(-650);
+        }
+        if (movKeys.A.isDown) {
+            this.player.setVelocityX(-350);
+            this.player.play("left", true);
+        }
+        else if (movKeys.D.isDown) {
+            this.player.setVelocityX(350);
+            this.player.play("right", true);
+
+        }
+        else {
+            this.player.setVelocityX(0);
+            this.player.play("idle", true);
+        }
+    }
+```
+
+Quando chamamos, finalmente, essa função dentro do `update()`, teremos nosso movimento e quando você testar verá que não consegue coletar de fato as moedas, mas isso é porque colocamos a colisão como overlap e não chamamos nenhum _callback_, significa que o Mush passa por elas como se não existissem. Portanto vamos criar essa função de coleta, mas o que ela vai fazer?
+
+
+# Conclusão
+
+Esse capítulo poderia ser muito maior do que é, porém cada jogo têm suas peculiaridades, no nosso exemplo não há muitas colisões e/ou corpos físicos e o movimento do Mush é bem simples, mas a física é o que dita como as coisas se movem e interagem, então sempre iremos usar ela.

@@ -66,13 +66,13 @@ Se olhar a tela agora estará vendo o personagem dançando inquietamente, pronto
         //...
         this.anims.create({
             key: "left",
-            frames: this.anims.generateFrameNumbers('walking_left', { frames: [0, 1, 2, 3] }),
+            frames: this.anims.generateFrameNumbers('player_left', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
             key: "right",
-            frames: this.anims.generateFrameNumbers('walking_right', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('player_right', { start: 0, end: 3 }),
             frameRate: 10,
             repeat: -1,
         }); 
