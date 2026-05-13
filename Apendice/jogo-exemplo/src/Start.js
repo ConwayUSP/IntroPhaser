@@ -16,20 +16,26 @@ export default class Start extends Phaser.Scene {
 
     create() {
         this.lights.enable();
-        this.lights.setAmbientColor(0x444444); // luz ambiente (senão fica tudo escuro)
+        this.lights.setAmbientColor(0x333333); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true)
         this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true);
+        this.lava = this.physics.add.sprite(640, 710, 'lava').setScale(2, 0.5)
+        this.fireballGroup = this.physics.add.group({ allowGravity: false, collideWorldBounds: true })
+        this.lava.body.setAllowGravity(false)
         this.createCoins();
-        this.createPlatforms()
+        this.createPlatforms();
         this.createLight();
         this.physics.add.collider(this.player, this.platformGroup);
-        this.physics.add.overlap(this.player, this.coinsGroup);
-
-
+        this.physics.add.overlap(this.player, this.coinsGroup, (player, coin) => { this.collectCoin(player, coin) });
+        this.physics.add.collider(this.fireballGroup, this.platformGroup)
 
 
         this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '20px', fill: '#11a531' });
-        this.timerTxt = this.add.text(20, 40, 'Timer: 0', { fontSize: '20px', fill: '#b8190e' });
+        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '20px', fill: '#b8190e' });
+        this.lives = 3;
+        this.score = 0;
+
+
         this.anims.create({
             key: "idle",
             frames: this.anims.generateFrameNumbers('player_idle', { frames: [0, 1] }),
@@ -89,7 +95,8 @@ export default class Start extends Phaser.Scene {
         positions.forEach(pos => {
             let coin = this.coinsGroup.create(pos.x, pos.y, 'coin');
             coin.setScale(2);
-            // coin.setData("ID", i);
+            coin.setData("ID", i);
+            i++;
         });
         this.coinsGroup.getChildren().forEach(coin => {
             coin.body.setAllowGravity(false);
@@ -109,19 +116,21 @@ export default class Start extends Phaser.Scene {
         this.platformGroup = this.physics.add.group({ allowGravity: false, immovable: true });
         this.platformGroup.createMultiple({
             key: 'platform',
-            repeat: 5
+            repeat: 6
         }); // cria 6 de uma vez (1 + repeat)
         let platforms = this.platformGroup.getChildren(); // retorna um array contendo cada um
         platforms[0].setPosition(100, 640);
         platforms[1].setPosition(80, 380);
         platforms[2].setPosition(350, 550).setScale(0.5, 1);
         platforms[3].setPosition(640, 485).setScale(1, 1.3);
-        platforms[4].setPosition(780, 280);
-        platforms[5].setPosition(1200, 670);
+        platforms[4].setPosition(980, 300);
+        platforms[5].setPosition(880, 580);
+        platforms[6].setPosition(1200, 670);
         this.platformGroup.setTint(0xf55666)
     }
 
     createLight() {
+        this.pentagramLights = [];
         let positions = [
             { x: 400, y: 290 },
             { x: 880, y: 290 },
@@ -130,8 +139,8 @@ export default class Start extends Phaser.Scene {
             { x: 640, y: 100 },
         ]
         positions.forEach(pos => {
-            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false)
-
+            let newLight = this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 0).setVisible(true)
+            this.pentagramLights.push(newLight)
         })
     }
 
@@ -155,8 +164,28 @@ export default class Start extends Phaser.Scene {
         }
     }
 
-    // collectCoin(player, coin) {
-    //     coin.destroy;
-    //     this.createLight(coin.getData("ID"))
-    // }
+    collectCoin(player, coin) {
+
+        coin.disableBody(true, true);
+        let LightId = this.pentagramLights[coin.getData('ID')];
+        LightId.setIntensity(LightId.intensity + 2);
+        if (this.coinsGroup.countActive(true) === 0) {
+            this.coinsGroup.getChildren().forEach(coin => {
+                coin.enableBody(true, coin.x, coin.y, true, true)
+            })
+        }
+
+        const bounds = this.physics.world.bounds;
+
+        const rect = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+
+        const point = Phaser.Geom.Rectangle.GetPoint(rect, Math.random());
+
+        let fireball = this.fireballGroup.create(point.x, point.y, 'fireball')
+        fireball.setVelocityX(Phaser.Math.Between(-100, 100) * 5)
+        fireball.setVelocityY(Phaser.Math.Between(-100, 100) * 5)
+        fireball.setBounce(1, 1);
+        this.scoreTxt.setText(`Score: ${++this.score}`);
+
+    }
 }

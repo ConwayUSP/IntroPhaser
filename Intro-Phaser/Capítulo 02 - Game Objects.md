@@ -92,7 +92,7 @@ Se nada explodiu ainda você deve ver sua imagem renderizada, **LEMBRE** sempre 
     .setTint() // aplica uma cor (tintura) 
 
 ```
-As `sprites` tem basicamente todos os métodos de imagem e o adicional de podermos criar animações em cima delas, mas veremos isso no próximo capítulo. Porém o Phaser também consegue carregar `spritesheets` nativamente para ser usada em uma animação, ou seja, nós podemos já carregar ela e adicionar na cena, vamos colocar as bolas de fogo e a lava também: 
+As `sprites` tem basicamente todos os métodos de imagem e o adicional de podermos criar animações em cima delas, mas veremos isso no próximo capítulo. Porém o Phaser também consegue carregar `spritesheets` nativamente para ser usada em uma animação, ou seja, nós podemos já carregar ela e adicionar na cena, vamos colocar a bola de fogo e a lava também: 
 
 ```js
 // ./src/Start.js
@@ -152,19 +152,20 @@ Pronto, mas ainda precisamos de um chão e plataformas para conseguir pegar elas
 
 ```js
     createPlatforms() {
-        this.platformGroup = this.add.group();
+        this.platformGroup = this.add.group({ allowGravity: false, immovable: true });
         this.platformGroup.createMultiple({
             key: 'platform',
-            repeat: 5
+            repeat: 6
         }); // cria 6 de uma vez (1 + repeat)
-        let platforms = this.platformGroup.getChildren(); // retorna um array contenco cada um
-        platforms[0].setPosition(80, 680);
+        let platforms = this.platformGroup.getChildren(); // retorna um array contendo cada um
+        platforms[0].setPosition(100, 640);
         platforms[1].setPosition(80, 380);
         platforms[2].setPosition(350, 550).setScale(0.5, 1);
         platforms[3].setPosition(640, 485).setScale(1, 1.3);
-        platforms[4].setPosition(780, 280);
-        platforms[5].setPosition(1200, 670);
-        this.platformGroup.setTint(0xf55666);
+        platforms[4].setPosition(980, 300);
+        platforms[5].setPosition(880, 580);
+        platforms[6].setPosition(1200, 670);
+        this.platformGroup.setTint(0xf55666)
     }
 ```
 Mas você como um bom programador já viu que a coisa ta ficando feia, algumas cópias e tendo que colocar as posições _hardcoded_ não é a melhor prática, como nosso jogo-exemplo é simples vamos deixar assim mas claramente existe meios melhores e softwares especializados para criar JSON. O Phaser tem compatibilidade com vários deles. (vamos criar outros assets pro jogo-exemplo depois, por enquanto deixamos assim)
@@ -176,28 +177,30 @@ Luzes e sombras são muito importante para a sensação de imersão e por isso e
 ```js
     create() {
         this.lights.enable(); // sempre precisa ligar antes
-        this.lights.setAmbientColor(0x444444); // luz ambiente (senão fica tudo escuro)
+        this.lights.setAmbientColor(0x333333); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true); // para interagir com o fundo
         // ...
         createLight();
     }
     createLight() {
+        this.pentagramLights = []; // vamos guardar elas em um array para usar depois...
         let positions = [
-            {x: 400, y: 290},
-            {x: 880, y: 290},
-            {x: 500, y: 570},
-            {x: 790, y: 570},
-            {x: 640, y: 100},
+            { x: 400, y: 290 },
+            { x: 880, y: 290 },
+            { x: 500, y: 570 },
+            { x: 790, y: 570 },
+            { x: 640, y: 100 },
         ]
         positions.forEach(pos => {
-            this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 6).setVisible(false) // vamos deixar false por enquanto, para quando pegar uma moeda a luz acender, a gente pode acessar o array como this.lights.lights (parece tosco mas é isso)
+            let newLight = this.lights.addLight(pos.x, pos.y, 100, 0xff0000, 0).setVisible(true) // addLight(x, y, raio, cor, intensidade) deixamos elas no 0 por enquanto, pode mudar para ver como é a renderização
+            this.pentagramLights.push(newLight) // coloca cada um no array
         })
     }
 ```
 
 # Text e BitmapText
 
-Praticamente todo texto do jogo será um desses dois formatos, o `text` usa a própia API do Canvas e escreve deu texto na tela e o `Bitmap Text` é como se fosse um spritesheet de uma fonte e usa ela para criar seu texto. Textos são muito versáteis, pode ser usado como diálogo, na UI, números de dano etc, no nosso caso podemos fazer alguns textos para nosso jogo: um _Timer_ e um contador de vidas, por agora. Para fins didáticos iremos ter uma outra cena que será a tela de _Game Over_ com outros textos mais para frente.
+Praticamente todo texto do jogo será um desses dois formatos, o `text` usa a própia API do Canvas e escreve deu texto na tela e o `Bitmap Text` é como se fosse um spritesheet de uma fonte e usa ela para criar seu texto. Textos são muito versáteis, pode ser usado como diálogo, na UI, números de dano etc, no nosso caso podemos fazer alguns textos para nosso jogo: um _Score_ e um contador de vidas, por agora. Para fins didáticos iremos ter uma outra cena que será a tela de _Game Over_ com outros textos mais para frente.
 
 Para criar um texto é a mesma lógica dos outros game objects:
 
@@ -208,8 +211,10 @@ Para criar um texto é a mesma lógica dos outros game objects:
         //...
         // vamos inicializar assim
         this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '24px', fill: '#b8190e' });
-        this.timerTxt = this.add.text(20, 40, 'Timer: 0', { fontSize: '24px', fill: '#b8190e' });
-        // quando vermos o Data Manager do Phaser mudamos um pouco aqui
+        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '24px', fill: '#b8190e' });
+        // e também variáveis associadas
+        this.lives = 3;
+        this.score = 0;
     }
 ```
 
