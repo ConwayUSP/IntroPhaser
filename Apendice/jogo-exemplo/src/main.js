@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import Start from "./Start.js"
+import GameOver from "./GameOver.js"
 
 
 const config = {
@@ -14,7 +15,7 @@ const config = {
             debug: true,
         } // qual engine física será usada, nesse caso arcade, e já da para colocar uma gravidade geral e o modo de debug
     },
-    scene: Start, // as cenas que compõe o jogo 
+    scene: [Start, GameOver], // as cenas que compõe o jogo 
     scale: {
         mode: Phaser.Scale.FIT, // ajusta a tela do jogo automaticamente com o fundo
         autoCenter: Phaser.Scale.CENTER_BOTH // centraliza essa tela
