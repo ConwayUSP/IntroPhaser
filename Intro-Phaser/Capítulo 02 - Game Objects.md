@@ -209,12 +209,9 @@ Para criar um texto é a mesma lógica dos outros game objects:
 
     create() {
         //...
-        // vamos inicializar assim
+        // o quarto parâmetro é uma config de estilos, existem vários como negrito, fontes, etc
         this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '24px', fill: '#b8190e' });
-        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '24px', fill: '#b8190e' });
-        // e também variáveis associadas
-        this.lives = 3;
-        this.score = 0;
+        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '24px', fill: '#14b80e' });
     }
 ```
 

@@ -2,6 +2,10 @@ import Phaser from "phaser"
 
 export default class Start extends Phaser.Scene {
 
+    constructor() {
+        super('Start');
+    }
+
     preload() {
         this.load.image('platform', 'platform.png');
         this.load.image('coin', 'coin.png');
@@ -15,6 +19,7 @@ export default class Start extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.fadeIn(800)
         this.lights.enable();
         this.lights.setAmbientColor(0x333333); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true)
@@ -25,15 +30,16 @@ export default class Start extends Phaser.Scene {
         this.createCoins();
         this.createPlatforms();
         this.createLight();
+        this.registry.set('lives', 3);
+        this.registry.set('score', 0);
+        this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '24px', fill: '#b8190e' });
+        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '24px', fill: '#14b80e' });
+
+
         this.physics.add.collider(this.player, this.platformGroup);
-        this.physics.add.overlap(this.player, this.coinsGroup, (player, coin) => { this.collectCoin(player, coin) });
         this.physics.add.collider(this.fireballGroup, this.platformGroup)
-
-
-        this.lifeTxt = this.add.text(20, 20, 'Lives: 3', { fontSize: '20px', fill: '#11a531' });
-        this.scoreTxt = this.add.text(20, 40, 'Score: 0', { fontSize: '20px', fill: '#b8190e' });
-        this.lives = 3;
-        this.score = 0;
+        this.physics.add.overlap(this.player, this.coinsGroup, (player, coin) => { this.collectCoin(player, coin) });
+        this.touchDanger = this.physics.add.overlap(this.player, [this.lava, this.fireballGroup], (player, obj) => { this.takeDmg(player, obj) });
 
 
         this.anims.create({
@@ -61,7 +67,7 @@ export default class Start extends Phaser.Scene {
         // this.time.delayedCall(250, () => {
         //     let toggle = true; // Variável para controlar o estado
 
-        //     this.time.addEvent({
+        //     this.coinFix = this.time.addEvent({
         //         delay: 500, // Metade do intervalo original, já que ele alterna
         //         callback: () => {
         //             const offsetX = toggle ? 0 : this.coinsGroup.getChildren()[0].width; // Pega o width da coin ou 0 para ajustar o Offset
@@ -80,6 +86,11 @@ export default class Start extends Phaser.Scene {
 
     update(time, delta) {
         this.playerMovement()
+        if (this.registry.get('lives') == 0) {
+            this.cameras.main.setAlpha(0.3)
+            this.scene.pause()
+            this.scene.launch('GameOver')
+        }
     }
 
     createCoins() {
@@ -185,7 +196,21 @@ export default class Start extends Phaser.Scene {
         fireball.setVelocityX(Phaser.Math.Between(-100, 100) * 5)
         fireball.setVelocityY(Phaser.Math.Between(-100, 100) * 5)
         fireball.setBounce(1, 1);
-        this.scoreTxt.setText(`Score: ${++this.score}`);
+        this.registry.inc('score', 1)
+        this.scoreTxt.setText(`Score: ${this.registry.get('score')}`);
+    }
+    takeDmg() {
+        this.coinFix.reset()
+        this.touchDanger.active = false;
+        this.player.setTint(0x00ff00)
+        this.time.delayedCall(2000, () => {
+            this.touchDanger.active = true;
+            this.player.setTint(0xffffff)
 
+        })
+        this.cameras.main.shake(200, 0.005)
+        this.registry.inc('lives', -1);
+        this.lifeTxt.setText(`Lives: ${this.registry.get('lives')}`)
+        this.player.setPosition(100, 600);
     }
 }

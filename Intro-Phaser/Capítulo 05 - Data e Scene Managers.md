@@ -77,7 +77,6 @@ Com isso cada moeda vai ter um dado chamado "ID" e podemos pegar esse dado em qu
         fireball.setVelocityX(Phaser.Math.Between(-100, 100) * 5)
         fireball.setVelocityY(Phaser.Math.Between(-100, 100) * 5)
         fireball.setBounce(1, 1);
-        this.scoreTxt.setText(`Score: ${++this.score}`); // podemos usar `${variable}` para colocar variáveis em strings
 
     }
 ```
@@ -122,9 +121,9 @@ Como será uma cena simples, não precisamos do preload(). Nessa cena vamos some
 ```js 
 // ./GameOver.js
     create() {
-        this.add.text(640, 300, 'Game Over', { fontSize: '60px', fill: '#f75002', fontStyle: 'bold' })
-        this.add.text(640, 400, `Score: ${this.registry.get('score')}`, { fontSize: '24px', fill: '#f3f702' })
-        this.add.text(640, 500, 'R to retry', { fontSize: '24px', fill: '#16f702' })
+        this.add.text(470, 250, 'Game Over', { fontSize: '60px', fill: '#f75002', fontStyle: 'bold' })
+        this.add.text(550, 400, `Score: ${this.registry.get('score')}`, { fontSize: '24px', fill: '#f3f702' })
+        this.add.text(550, 500, 'R to retry', { fontSize: '24px', fill: '#16f702' })
     }
 ```
 
@@ -145,10 +144,41 @@ Alguns métodos úteis do this.scene:
     }
     update() {
         if(Phaser.Input.Keyboard.JustDown(this.retryKey)) {
-            this.scene.start('Start')
+            this.scene.start('Start') // lembre de colocar o constructor no Start.js também como constructor() {super('Start')} para o Phaser saber que o nome da cena é Start e não default
         }
     }
 ```
 
+Pronto, já temos nossa cena feita e agora precisamos decidir quando chamar ela, logicamente será quando o jogo acaba, ou seja, as vidas do Mush chegam a 0, então voltando na nossa cena principal vamos colocar a colisão entre o Mush e as fireballs/lava e descontar a vida quando isso acontecer. E também mudar a lógica dos textos de score e vidas, pegando eles sempre do registry para ser mais dinâmico, para isso precisamos adicionar eles primeiro.
+
+```js
+// ./Start.js
+    create() {
+        //...
+        this.registry.set('lives', 3);
+        this.registry.set('score', 0);
+        this.touchDanger = this.physics.add.overlap(this.player, [this.lava, this.fireballGroup], (player, obj) => {}); // aqui vamos colocar uma função do que vai acontecer quando tomamos dano no pŕoximo capítulo
+
+    }
+
+    update() {
+        //...
+        if(this.registry.get('lives') == 0) {
+            this.scene.pause() // pausamos e damos launch invés de só start pro fundo continuar renderizado
+            this.scene.launch('GameOver')
+        }
+    }
+
+    collectCoin() {
+        //...
+        this.registry.inc('score', 1)
+        this.scoreTxt.setText(`Score: ${this.registry.get('score')}`); // podemos usar `${variable}` para colocar variáveis em strings
+
+    }
+```
+
+# Conclusões
+
+Nesse capítulo vimos um pouco como se comunicar com outras cenas através do _scene manager_ e também como adicionar dados aos game objects e ao _registry_ que é o sistema de controle de dados nativo do Phaser, com isso o jogo está tomando forma mas ainda não tá realmente 'jogável'. No próximo capítulo vamos terminar a lógica de dano e fazer os ajustes finais.
 
 

@@ -81,3 +81,6 @@ Para o carregamento usamos o `this.load` e em seguida algum _game object_ como i
 
 >Os parâmetros do this.load geralmente são primeiro a string que será a chave para usar em outros lugares e o segundo o PATH de onde está de fato o arquivo (se você deixar no public o Vite já pega direto de lá por padrão)
 
+# Conclusões
+
+Como podemos ver, praticamente toda base de um jogo precisam ter esses elementos básicos como _game loop_, física, carregamentos e algo parecido com cenas, nos próximos capítulos vamos ver como esses conceitos aparecem no contexto do Phaser
