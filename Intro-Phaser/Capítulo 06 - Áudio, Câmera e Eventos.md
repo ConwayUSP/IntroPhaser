@@ -70,4 +70,27 @@ E com isso resolvemos o problema antes dele acontecer, mas outro problema que, s
     }
 ```
 
-Vamos com calma nesse código que ele pode assustar. De acordo com nosso problema, a hitbox é sempre fixa no canto superior esquerdo da nossa sprite, então quando giramos ela com o tween ela também fica invertida, saindo da nossa sprite pro lado direito. Para resolver criamos uma `delayedCall` com metade da duração do giro, assim esse código começa a rodar quando a moeda
+Vamos com calma nesse código que ele pode assustar. De acordo com nosso problema, a hitbox é sempre fixa no canto superior esquerdo da nossa sprite, então quando giramos ela com o tween ela também fica invertida, saindo da nossa sprite pro lado direito. Para resolver criamos uma `delayedCall` com metade da duração do giro, assim esse código começa a rodar quando a moeda está "virada". Criamos um evento customizado que se repete a cada 500 ms onde ele vai escolher se o offset (hitbox) da moeda vai estar no canto esquerdo ou direito, na primeira chamada a gente deixa no esquerdo porque já está correto e na próxima por conta do `toggle = !toggle;` ela inverte para a direita. Agora funciona certo?
+
+Sim só que mais ou menos, como criamos um evento novo ele não está lógicamente ligado com o timer do tween em si, mas sim com o da cena, e por conta disso pode haver ~~e haverá~~ problemas de sincronização, por isso é melhor mudar no próprio tween, como está no `./Apendice/jogo-exemplo`, dê uma olhada lá.
+
+De qualquer forma esse não é o propósito principal de eventos, por assim dizer. Eventos são mais bem utilizados quanto se quer comunicar entre casses/cenas sem perder a sua modularidade, ou seja, uma classe emite um evento quando acontece algo e qualquer outra pode ouvir ele e atuar de acordo. Como nosso exemplo é bem simples (nem separamos em classes distintas), realmente não faz muito sentido usar eventos nesse contexto e podemos nos contentar com os callbacks que os métodos do Phaser disponibiliza, mas para efeitos didáticos, vamos usar eles para sons, pois nosso jogo ta muito quieto, quieto demais....
+
+# Áudio
+
+As músicas e efeitos sonoros de jogos são marcantes e estão fortemente ligadas a emoção que o jogo passa, e por ser outra parte fundamental de jogos o Phaser também nos ajuda nas configurações. No nosso exemplo vamos fazer alguns áudios: quando perde vida, quando coleta moeda, quando acaba o jogo e uma música ambiente.
+
+> onde pegar os audios
+
+```js
+// ./Start.js
+    preload() {
+        this.load.audio('coinAudio','collectCoinAudio.wav');
+        //...
+    }
+    collectCoin() {
+        this.sound.play('coinAudio');
+        //...
+    }
+
+```

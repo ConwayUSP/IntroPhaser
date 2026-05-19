@@ -12,6 +12,7 @@ export default class Start extends Phaser.Scene {
         this.load.image('background', 'background.png');
         this.load.image('fireball', 'fireball.png');
         this.load.image('lava', 'lava.png');
+        this.load.audio('coinAudio','collectCoinAudio.wav');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
@@ -67,7 +68,7 @@ export default class Start extends Phaser.Scene {
         // this.time.delayedCall(250, () => {
         //     let toggle = true; // Variável para controlar o estado
 
-        //     this.coinFix = this.time.addEvent({
+        //     this.time.addEvent({
         //         delay: 500, // Metade do intervalo original, já que ele alterna
         //         callback: () => {
         //             const offsetX = toggle ? 0 : this.coinsGroup.getChildren()[0].width; // Pega o width da coin ou 0 para ajustar o Offset
@@ -120,6 +121,20 @@ export default class Start extends Phaser.Scene {
             duration: 500,
             repeat: -1,
             yoyo: true,
+            onRepeat: () => {
+                this.time.delayedCall(250, () => {
+                    this.coinsGroup.getChildren().forEach(coin => {
+                        coin.body.setOffset(coin.width, 0);
+                    });
+                })
+                this.time.delayedCall(750, () => {
+                    this.coinsGroup.getChildren().forEach(coin => {
+                        coin.body.setOffset(0, 0);
+                    });
+                })
+            },
+
+
         })
     }
 
@@ -177,6 +192,7 @@ export default class Start extends Phaser.Scene {
 
     collectCoin(player, coin) {
 
+        this.sound.play('coinAudio');
         coin.disableBody(true, true);
         let LightId = this.pentagramLights[coin.getData('ID')];
         LightId.setIntensity(LightId.intensity + 2);
@@ -200,7 +216,6 @@ export default class Start extends Phaser.Scene {
         this.scoreTxt.setText(`Score: ${this.registry.get('score')}`);
     }
     takeDmg() {
-        this.coinFix.reset()
         this.touchDanger.active = false;
         this.player.setTint(0x00ff00)
         this.time.delayedCall(2000, () => {
