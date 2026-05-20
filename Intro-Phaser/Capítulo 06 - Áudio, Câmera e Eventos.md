@@ -78,19 +78,29 @@ De qualquer forma esse não é o propósito principal de eventos, por assim dize
 
 # Áudio
 
-As músicas e efeitos sonoros de jogos são marcantes e estão fortemente ligadas a emoção que o jogo passa, e por ser outra parte fundamental de jogos o Phaser também nos ajuda nas configurações. No nosso exemplo vamos fazer alguns áudios: quando perde vida, quando coleta moeda, quando acaba o jogo e uma música ambiente.
+As músicas e efeitos sonoros de jogos são marcantes e estão fortemente ligadas a emoção que o jogo passa, e por ser outra parte fundamental de jogos o Phaser também nos ajuda nas configurações. No nosso exemplo vamos fazer alguns áudios: quando perde vida, quando coleta moeda e uma música ambiente.
 
-> onde pegar os audios
+> Os áudios foram pegos da plataforma [pixabay](https://pixabay.com/sound-effects/)
 
 ```js
 // ./Start.js
     preload() {
         this.load.audio('coinAudio','collectCoinAudio.wav');
-        //...
-    }
-    collectCoin() {
-        this.sound.play('coinAudio');
+        this.load.audio('dyingAudio','dyingAudio.wav');
         //...
     }
 
+    createCoins() {
+        this.coinSound = this.sound.add('coinAudio') // podemos adicionar no sound manager
+        //...
+
+    }
+    collectCoin() {
+        this.coinSound.play({ volume: 0.5, rate: 1.5 }); // e chamar por ele mesmo
+        //...
+    }
+
+    takeDmg() {
+        this.sound.play('dyingAudio', { rate: 3, volume: 0.3 }) // ou pelo sound.play dando a key do loaded audio
+    }
 ```

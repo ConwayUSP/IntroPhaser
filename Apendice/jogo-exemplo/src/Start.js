@@ -12,7 +12,8 @@ export default class Start extends Phaser.Scene {
         this.load.image('background', 'background.png');
         this.load.image('fireball', 'fireball.png');
         this.load.image('lava', 'lava.png');
-        this.load.audio('coinAudio','collectCoinAudio.wav');
+        this.load.audio('coinAudio', 'collectCoinAudio.wav');
+        this.load.audio('dyingAudio', 'dyingAudio.wav');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
@@ -24,7 +25,7 @@ export default class Start extends Phaser.Scene {
         this.lights.enable();
         this.lights.setAmbientColor(0x333333); // luz ambiente (senão fica tudo escuro)
         this.add.image(640, 360, 'background').setLighting(true)
-        this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true);
+        this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true).setCircle(16);
         this.lava = this.physics.add.sprite(640, 710, 'lava').setScale(2, 0.5)
         this.fireballGroup = this.physics.add.group({ allowGravity: false, collideWorldBounds: true })
         this.lava.body.setAllowGravity(false)
@@ -95,6 +96,7 @@ export default class Start extends Phaser.Scene {
     }
 
     createCoins() {
+        this.coinSound = this.sound.add('coinAudio')
         let positions = [
             { x: 100, y: 250 },
             { x: 350, y: 500 },
@@ -192,8 +194,8 @@ export default class Start extends Phaser.Scene {
 
     collectCoin(player, coin) {
 
-        this.sound.play('coinAudio');
         coin.disableBody(true, true);
+        this.coinSound.play({ delay: 0, volume: 0.5, rate: 1.5 });
         let LightId = this.pentagramLights[coin.getData('ID')];
         LightId.setIntensity(LightId.intensity + 2);
         if (this.coinsGroup.countActive(true) === 0) {
@@ -217,6 +219,7 @@ export default class Start extends Phaser.Scene {
     }
     takeDmg() {
         this.touchDanger.active = false;
+        this.sound.play('dyingAudio', { rate: 3, volume: 0.3 })
         this.player.setTint(0x00ff00)
         this.time.delayedCall(2000, () => {
             this.touchDanger.active = true;

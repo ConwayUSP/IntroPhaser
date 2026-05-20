@@ -12,7 +12,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 980 },
-            debug: true,
+            debug: true
         } // qual engine física será usada, nesse caso arcade, e já da para colocar uma gravidade geral e o modo de debug
     },
     scene: [Start, GameOver], // as cenas que compõe o jogo 

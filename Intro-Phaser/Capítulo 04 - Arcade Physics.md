@@ -91,7 +91,7 @@ Vamos usar a mesma ideia pro player e para as plataformas:
 
 ```js
 //      ./Start.js
-    this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true);; // só colocar ele na física, queremos gravidade pra ele e que colida com o limite do mapa (veremos colisões depois)
+    this.player = this.physics.add.sprite(100, 600, 'player_idle').setCollideWorldBounds(true).setCircle(16); // só colocar ele na física, queremos gravidade pra ele e que colida com o limite do mapa (veremos colisões depois), deixamos a hitbox dele como um círculo tbm
         //...
     createPlatforms() {
         this.platformGroup = this.physics.add.group({allowGravity: false, immovable: true}); // conseguimos colocar as configs direto na criação também
