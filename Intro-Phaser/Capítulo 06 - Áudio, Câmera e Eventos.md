@@ -93,7 +93,6 @@ As músicas e efeitos sonoros de jogos são marcantes e estão fortemente ligada
     createCoins() {
         this.coinSound = this.sound.add('coinAudio') // podemos adicionar no sound manager
         //...
-
     }
     collectCoin() {
         this.coinSound.play({ volume: 0.5, rate: 1.5 }); // e chamar por ele mesmo
@@ -104,3 +103,36 @@ As músicas e efeitos sonoros de jogos são marcantes e estão fortemente ligada
         this.sound.play('dyingAudio', { rate: 3, volume: 0.3 }) // ou pelo sound.play dando a key do loaded audio
     }
 ```
+
+Agora vamos colocar uma soundtrack, e como diria Tenacious D **You can't beat the METAL**
+
+```js
+// ./Start.js
+    preload() {
+        //...
+        this.load.audio('soundtrack', 'soundtrack.wav');
+    }
+
+    create() {
+        //...
+        createSoundtrack()
+    }
+    collectCoin() {
+        //...
+        if (this.coinsGroup.countActive(true) === 0) {
+            this.soundtrack.rate *= 1.2 // deixar um pouco mais animado quando resetar as coins
+        //...
+        }
+    }
+    createSoundtrack() {
+        this.soundtrack = this.sound.add('soundtrack')
+        this.soundtrack.play({
+            loop: true,
+            rate: 1
+        })
+    }
+```
+# Conclusão
+
+Se chegou até aqui significa que tem um joguinho pronto pra mostrar pra todo mundo (aeee parabéns) e também tem toda a base para criar o seu próprio, com mais cenas, mais animações, músicas etc. Confesso que o ambiente Web é um pouco limitado também em relação à uma engine completa, mas você viu como é fácil adicionar e configurar sistemas usando o Phaser e é por isso que ele é um ótimo 'fazedor de protótipo', se você tem uma idéia e quer primeiro ver ela materializar de verdade antes de evoluir, o Phaser é um bom caminho. Lembre também que o que vimos aqui foi um pouco especializado para um jogo de uma cena plataforma usando Arcade, ou seja, o Phaser tem muito mais para ofertar além disso.
+Agora você pode ir para o [Projeto Final](../Projeto-Final.md) e muito obrigado por ler a trilha.

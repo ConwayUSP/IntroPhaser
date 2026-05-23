@@ -14,6 +14,7 @@ export default class Start extends Phaser.Scene {
         this.load.image('lava', 'lava.png');
         this.load.audio('coinAudio', 'collectCoinAudio.wav');
         this.load.audio('dyingAudio', 'dyingAudio.wav');
+        this.load.audio('soundtrack', 'soundtrack.wav');
         this.load.spritesheet('player_idle', 'idle.png', { frameWidth: 34, frameHeight: 32 }); // (key, [url], [frameConfig])
         this.load.spritesheet('player_left', 'walking_left.png', { frameWidth: 34, frameHeight: 32 });
         this.load.spritesheet('player_right', 'walking_right.png', { frameWidth: 34, frameHeight: 32 });
@@ -21,6 +22,7 @@ export default class Start extends Phaser.Scene {
     }
 
     create() {
+
         this.cameras.main.fadeIn(800)
         this.lights.enable();
         this.lights.setAmbientColor(0x333333); // luz ambiente (senão fica tudo escuro)
@@ -29,6 +31,7 @@ export default class Start extends Phaser.Scene {
         this.lava = this.physics.add.sprite(640, 710, 'lava').setScale(2, 0.5)
         this.fireballGroup = this.physics.add.group({ allowGravity: false, collideWorldBounds: true })
         this.lava.body.setAllowGravity(false)
+        this.createSoundtrack();
         this.createCoins();
         this.createPlatforms();
         this.createLight();
@@ -64,8 +67,6 @@ export default class Start extends Phaser.Scene {
         });
         this.player.play('idle'); // o .play recebe a key da animação e pode ser chamado direto em uma sprite 
 
-
-
         // this.time.delayedCall(250, () => {
         //     let toggle = true; // Variável para controlar o estado
 
@@ -91,6 +92,7 @@ export default class Start extends Phaser.Scene {
         if (this.registry.get('lives') == 0) {
             this.cameras.main.setAlpha(0.3)
             this.scene.pause()
+            this.soundtrack.pause()
             this.scene.launch('GameOver')
         }
     }
@@ -199,6 +201,7 @@ export default class Start extends Phaser.Scene {
         let LightId = this.pentagramLights[coin.getData('ID')];
         LightId.setIntensity(LightId.intensity + 2);
         if (this.coinsGroup.countActive(true) === 0) {
+            this.soundtrack.rate *= 1.2
             this.coinsGroup.getChildren().forEach(coin => {
                 coin.enableBody(true, coin.x, coin.y, true, true)
             })
@@ -230,5 +233,12 @@ export default class Start extends Phaser.Scene {
         this.registry.inc('lives', -1);
         this.lifeTxt.setText(`Lives: ${this.registry.get('lives')}`)
         this.player.setPosition(100, 600);
+    }
+    createSoundtrack() {
+        this.soundtrack = this.sound.add('soundtrack')
+        this.soundtrack.play({
+            loop: true,
+            rate: 1
+        })
     }
 }
