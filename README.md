@@ -16,7 +16,7 @@ Por fim usaremos a base que o próprio [Phaser](https://docs.phaser.io/) disponi
 
 ## Requisitos
 
-Além de gostar de joguinhos browser, é bom saber um pouco sobre OOP (trilha de C++ tem uma parte muito boa) pois não iremos trabalhar isso na introdução de JS, apenas uns conceitos. E também um poquinho só de HTML, mas se for zerado não tem problema nenhum.
+Além de gostar de joguinhos browser, é bom saber um pouco sobre OOP (trilha de C++ tem uma parte muito boa) pois não iremos trabalhar isso na introdução de JS. E também um poquinho só de HTML, mas se for zerado não tem problema nenhum.
 
 ## O que esperamos que você saiba ao terminar?
 
