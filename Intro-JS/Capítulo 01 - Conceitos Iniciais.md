@@ -14,17 +14,29 @@ Porém existem `keywords` específicas e ideias novas coma ela, vamos começar p
 
 > Temos vários meios de debug mas o mais importante é se habituar com o console.log() que mostra no console do DevTools do browser (F12) e entender o que cada erro significa.
 
-## Variáveis
+## Variáveis e tipos
 
-As criações de variáveis são diretas, como ela é uma linguagem com tipagem dinâmica a gente não precisa definir o tipo da variável em sua criação, apenas usando a keyword `let` e saber um tipo de variável usando `typeof`. Também é possível criar constantes com `const` se você não quiser que ela varie, pode não parecer mas uma variável que não ~~vareia~~ é muito útil e ajuda na interpretabilidade do seu código.
+As criações de variáveis são diretas conseguindo fazer apenas usando a keyword `let` e saber um tipo de variável usando `typeof`. Também é possível criar constantes com `const` se você não quiser que ela varie, pode não parecer mas uma variável que não ~~vareia~~ é muito útil e ajuda na interpretabilidade do seu código.
 
 ```js
 const hero = "Jojo";
 let bestJojo = "Giorno Giovanna";
 bestJojo = 5; // podemos mudar o tipo quando há atribuição
-typeof(hero); // string - Podem ser (number, string, boolean, array, object)
+typeof(hero); // string
 ```
 Aqui podemos ver também a convenção adotada, variáveis começam com letra minúscula e usa Maiúscula quando começar outra palavra. 
+
+Já os tipos são um pouco diferentes, em C por exemplo temos os tipos primitivos `int` `char` `float` etc, como JS é orientada a objetos e tem tipagem dinâmica não deu erro quando reatribuimos o bestJojo com um número, sendo que ele era uma string. JS também tem seus tipos primitivos:
+
+- **boolean**: `true` e `false`.
+- **null**: Um tipo específico para denotar um Null value.
+- **undefined**: Tipo para valores não definidos.
+- **number**: Um inteiro ou decimal.
+- **BigInt**: Um inteiro muito grande.
+- **string**: Uma série de caracteres.
+- **symbol**: Um tipo para valores que são garantidamente únicos.
+
+E por fim existem os tipo de referência (pode pensar como uma struct em C) que são os **Objects**.
 
 ## Operações
 
@@ -126,3 +138,30 @@ const cubedNumbers = map(x => x * x * x, numbers);
 ```
 
 > Elas também são muito úteis quando trabalhamos com as classes e objetos, isso fica mais claro na Intro-Phaser
+
+## Classes e Objetos
+
+Como dito anteriormente, não vamos destrinchar as classes que o JS dispôe, até porque usamos as do Phaser para nosso propósito, e também sobre o conceito de OOP (novamente veja na trilha de C++), mas a ideia geral sobre como elas funcionam no JS é a mesma em outras linguagens com o paradigma de orientação à objetos, além da sintaxe ser parecida:
+
+```js
+// Se quisermos criar um objeto solto
+const obj = { // usamos chaves para inicializar um objeto
+
+  property1: value1, // propriedades podem ser nomes
+  2: value2, // numeros
+  "property n": value3, // ou strings
+}
+// A partir de uma classe
+class Game {
+
+    constructor(name, type) { // método de criação
+        this.name = name; // nome do jogo
+        this.type = type; // tipo (2D, roguelike, MMO, etc)
+    }
+    getName() {
+        return this.name;
+    }
+}
+const myObj = new Game("mario67", "4D");
+console.log(myObj.getName()); // printa mario67
+```
