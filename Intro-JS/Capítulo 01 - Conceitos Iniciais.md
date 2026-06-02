@@ -139,6 +139,15 @@ const cubedNumbers = map(x => x * x * x, numbers);
 
 > Elas também são muito úteis quando trabalhamos com as classes e objetos, isso fica mais claro na Intro-Phaser
 
+Uma funcionalidade muito útil também é a possibilidade de passar vários parâmetros de uma só vez com a sintaxe dos `...parametro`, por exemplo:
+
+```js
+function printJojos(...jojos) {
+    console.log(jojos);
+}
+printJojos('Jonathan', 'Joseph', 'Jotaro', 'Josuke', 'Giorno', 'Jolyne', 'Johnny', 'Jo2ke', 'Jodio'); // o JS vai transformar isso em um array-like
+```
+
 ## Classes e Objetos
 
 Como dito anteriormente, não vamos destrinchar as classes que o JS dispôe, até porque usamos as do Phaser para nosso propósito, e também sobre o conceito de OOP (novamente veja na trilha de C++), mas a ideia geral sobre como elas funcionam no JS é a mesma em outras linguagens com o paradigma de orientação à objetos, além da sintaxe ser parecida:
@@ -153,15 +162,56 @@ const obj = { // usamos chaves para inicializar um objeto
 }
 // A partir de uma classe
 class Game {
-
+    static totalGames = 0;
     constructor(name, type) { // método de criação
         this.name = name; // nome do jogo
         this.type = type; // tipo (2D, roguelike, MMO, etc)
+        Game.totalGames++;
     }
     getName() {
         return this.name;
     }
 }
-const myObj = new Game("mario67", "4D");
-console.log(myObj.getName()); // printa mario67
+const mario = new Game("Mario67", "4D");
+const zelda = new Game("Zelda o carinha of timão", "VR");
+
+console.log(mario.getName()); // mario67
+console.log(Game.totalGames); // 2
 ```
+Em resumo bem resumido, o `this` está se referindo à instância criada da classe, ou seja, ao **objeto** em si e quando definimos uma variável `static` ela é ligada a **classe**. O _constructor_ é um método muito importante pois é nele que chega os parâmetros que você passa quando cria uma instância daquela classe.
+
+Contudo a parte mais importante para nosso caso é o fato de classes podem "pegar emprestado"/"extender" outras classes, sem ter que ficar copiando código adoidado e isso é muito poderoso quando seu projeto começa a ficar grande e você precisa de uma organização maior, a gente faz isso com o `extends`:
+
+```js
+// Um exemplo bem tosco
+class Character {
+    spells = ['Heartstone', 'Mount']; 
+    lifeValue = 100;
+    resourceType = 'Mana'
+    constructor(name, race) {
+        this.name = name;
+        this.race = race;
+    }
+    takeDmg() {
+        this.lifeValue--;
+    }
+    getName() {
+        return this.name; // como usamos o super na outra classe, temos acesso ao nome correto
+    }
+}
+class Warrior extends Character {
+    resourceType = 'Rage'; // podemos sobrescrever fora do construtor...
+    constructor(name, race) {
+        super(name,race); // o super faz com que os parâmetros que enviamos quando criamos o Warrior seja passado para o Character também
+        this.lifeValue = 200; // ...ou sobrescrever dentro
+        this.spells.push('Leap', 'Charge', 'Slam', 'Rend'); // se for usar um método tem que ser dentro de outro método
+    }
+}
+let warchief = new Warrior('Garrosh', 'Orc');
+warchief.didNothingWrong = true; // podemos criar propriedades únicas aquela instância, mas não é muito recomendado
+warchief.takeDmg(); // mesmo sem definir o takeDmg() na classe Warrior, por conta do extends ele existe e pode ser chamado
+console.log(warchief.lifeValue);
+console.log(warchief.spells);
+```
+Nesse exemplo nós criamos uma classe `Character` que contém algumas propriedades e métodos que sejam comuns a todos os personagens, depois fizemos outra classe `Warrior` que _extends_ o `Character`, ou seja, o que definimos na primeira classe já está ~~magicamente~~ criado dentro da segunda classe. No nosso exemplo do Phaser não vamos usar muito a criação ou (extensão?) de classes pois ele já tem as nativas, mas se o projeto for grande é muito mais pratico criar arquivos diferentes e extender as classes do Phaser para eles, podendo então configurar do jeito que for melhor.
+
