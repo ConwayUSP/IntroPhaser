@@ -215,3 +215,9 @@ console.log(warchief.spells);
 ```
 Nesse exemplo nós criamos uma classe `Character` que contém algumas propriedades e métodos que sejam comuns a todos os personagens, depois fizemos outra classe `Warrior` que _extends_ o `Character`, ou seja, o que definimos na primeira classe já está ~~magicamente~~ criado dentro da segunda classe. No nosso exemplo do Phaser não vamos usar muito a criação ou (extensão?) de classes pois ele já tem as nativas, mas se o projeto for grande é muito mais pratico criar arquivos diferentes e extender as classes do Phaser para eles, podendo então configurar do jeito que for melhor.
 
+> É possível não colocar o construtor nas classes porém o JS vai colocar por baixo dos panos, então ele meio que sempre existe e se for uma classe que extende outra, ele já coloca o _super()_ também
+
+# Conclusão
+
+Nessa introdução bem superficial vimos a sintaxe e um pouco do modo de escrever em JS, felizmente para nosso propósito usando o Phaser a gente não vai precisar das classes e métodos nativos de JS para Web pois o Phaser tem tudo isso adaptado para jogos, se você for ler um script real em JS verá muitas coisas bem diferentes e isso é provavelmente por conta das milhares bibliotecas e "plugins" e frameworks que o JS possui por conta de ser tão famoso, mas não se preocupe com isso, na intro-Phaser fica mais fácil de entender alguns conceitos.
+Portanto, hora da parte [legal](../Intro-Phaser/Capítulo%2000%20-%20%20Apresentação.md).

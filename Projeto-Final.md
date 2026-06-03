@@ -7,5 +7,7 @@ Para receber seu selo de Phaser será simples, como já possui o jogo exemplo na
 
 Além desse mini relatório, o projeto final também consiste em você mudar efetivamente o jogo exemplo, seja adicionando outra fase, outro perigo, um menu de pause ou start, colocar mais efeitos com a câmera, mais movimento nas plataformas... literalmente qualquer coisa além do que já existe, as possibilidades são infinitas porém não se sinta pressionado a fazer tudo, uma adição pequena já basta.
 
-E é isso, mande o jogo modificado e o mini relatório para um dos integrantes do projeto para ser analisado e está concluído a trilha do Phaser
+> Lembre-se que se você não fez o jogo-exemplo junto com a introdução e quiser pegar no Apendice pronto, precisa ainda instalar o npm, o vite e phaser para conseguir rodar
+
+E é isso, mande o jogo modificado e o mini relatório para um dos integrantes do projeto para ser analisado e está concluído a trilha do Phaser.
 
