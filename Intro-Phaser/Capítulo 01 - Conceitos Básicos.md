@@ -11,15 +11,15 @@ Elas serão o parâmetro quando for chamado essa classe e existem várias config
 ```js
 const config = {
     type: Phaser.AUTO, // usa o browser WebGL (ou Canvas) para renderizar na tela 
-    width: 1900, // comprimento da tela
-    height: 900, // altura da tela
+    width: 1280, // comprimento da tela
+    height: 720, // altura da tela
     backgroundColor: '#2d2d2d', // cor de fundo da tela
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 980 },
             debug: true,
-        } // qual engine física será usada, nesse caso arcade, e já da para colocar uma gravidade geral e o modo de debug (veremos mais sobre isso)
+        } // qual sistema físico será usado, nesse caso arcade, e já da para colocar uma gravidade geral e o modo de básico debug
     },
     scene: [], // as cenas que compõe o jogo 
     scale: {
@@ -53,8 +53,8 @@ export default class Start extends Phaser.Scene {
 
     }
 
-    update() {
-
+    update(time, delta) {
+        // time é o instante de tempo que o jogo está desde e o começo e delta é a taxa de atualização, normalmente 16.66 ms, para 60 FPS
     }
 
 }
@@ -72,10 +72,15 @@ Com isso podemos ver de fato alguns _game objects_ que o Phaser tem disponível 
 
 Para carregar as nossas sprites, músicas, mapas usamos o sistema embutido de carregamento do Phaser. Cada cena terá seu próprio `preload()` mas você não precisa usar ele em todas, a idéia geral (e recomendada) é ter um cena específica para carregar todos seu _assets_, no nosso exemplo vamos deixar em uma única cena por ser pequeno. Assim fica mais organizado e de fácil manutenção e você só carrega o que for necessário para sua cena específica, se for o caso. Sempre que fomos adicionar algum _game object_ precisamos ter carregado ele antes. E para onde eles vão?
 
+
 ### Cache
 
 Não faria sentido o _loader_ ser colocado em um arquivo separado que carregue tudo sendo que vou usar os _assets_ em outro arquivo, e é por isso que sempre que carregamos algo ele vai para algum `cache` (um armazenamento) que é **global**, ou seja, todas as cenas do Phaser.Game compartilham ele. Existe um cache para cada tipo: JSON, Video, Shaders entre outros, mas existe um importante que é o `textures` que, adivinhe, guarda suas imagens e sprites lindas.
 
-Para o carregamento usamos o `this.load` e em seguida algum _game object_ como imagem, _spritesheet_... Bom então vamos ver o que são esses Jogo Objetos no próximo capítulo
+Para o carregamento usamos o `this.load` e em seguida algum _game object_ como imagem, _spritesheet_... Bom então vamos ver o que são esses Jogo Objetos no próximo capítulo.
 
+>Os parâmetros do this.load geralmente são primeiro a string que será a chave para usar em outros lugares e o segundo o PATH de onde está de fato o arquivo (se você deixar no public o Vite já pega direto de lá por padrão)
 
+# Conclusões
+
+Como podemos ver, praticamente toda base de um jogo precisam ter esses elementos básicos como _game loop_, física, carregamentos e algo parecido com cenas, nos próximos capítulos vamos ver como esses conceitos aparecem no contexto do Phaser
