@@ -58,7 +58,7 @@ Para de fato criar os frames da animação nós usamos o `generateFrameNumbers()
     }
 ```
 
-Se olhar a tela agora estará vendo o personagem dançando inquietamente, pronto para pegar as moedas. Ele ainda não consegue se mover mas já vamos adionar as outras animações:
+Se olhar a tela agora estará vendo o personagem dançando inquietamente, pronto para pegar as moedas. Ele ainda não consegue se mover mas já vamos adicionar as outras animações:
 
 ```js
 // ./src/Start.js

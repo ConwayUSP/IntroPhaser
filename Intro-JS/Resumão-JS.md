@@ -10,7 +10,7 @@ Assim como em várias linguagens o JS não muda muito as ideias de sintaxe geral
 - Estruturas de controle: if, else, for, while, switch.
 - Símbolos matemáticos e lógicos: +, -, && (E), || (OU).
 
-Porém existem `keywords` específicas e ideias novas coma ela, vamos começar pelas variáveis.
+Porém existem `keywords` específicas e ideias novas com ela, vamos começar pelas variáveis.
 
 > Temos vários meios de debug mas o mais importante é se habituar com o console.log() que mostra no console do DevTools do browser (F12) e entender o que cada erro significa.
 
@@ -71,7 +71,7 @@ while (true) {
     }
     console.log("wow");
 }
-// for..of e for..in (um itera sobre os "nomes" do objeto e outro sobre os valores)
+// for .. in [..] e for .. of [..] (um itera sobre os "nomes" do objeto e outro sobre os valores)
 const arr = [3, 5, 7];
 for (const i in arr) {
     console.log(i);  // "0" "1" "2", nesse caso os nomes são os índices
